@@ -24,6 +24,10 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use MWGuerra\FileManager\Filament\Pages\FileManager;
+use MWGuerra\FileManager\Filament\Resources\FileSystemItemResource;
+use MWGuerra\FileManager\FileManagerPlugin;
+use Nette\Utils\FileSystem;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -49,17 +53,20 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
+                // FilamentInfoWidget::class,
                 ArchiveStatsOverview::class,
                 ArchiveStatsChart::class,
                 ArchiveCategoryChart::class,
             ])
             ->plugins([
                 FilamentShieldPlugin::make(),
-                NeobrutalismeTheme::make()
+                NeobrutalismeTheme::make(),
+                FileManagerPlugin::make([
+                        FileManager::class,           
+                ])
             ])
+            ->topNavigation()
             ->navigationGroups([
-                //
                 NavigationGroup::make('Arsip Dokumen')
                     ->icon('heroicon-o-archive-box')
                     ->collapsed(),
@@ -68,6 +75,9 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsed(),
                 NavigationGroup::make('User Management')
                     ->icon('heroicon-o-users')
+                    ->collapsed(),
+                NavigationGroup::make('Pengelolaan Dokumen')
+                    ->icon('heroicon-o-archive-box')
                     ->collapsed(),
             ])
             ->middleware([
