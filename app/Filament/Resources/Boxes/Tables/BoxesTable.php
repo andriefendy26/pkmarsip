@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -19,11 +20,17 @@ class BoxesTable
                     ->searchable(),
                 TextColumn::make('nama_box')
                     ->searchable(),
-                TextColumn::make('rak_id')
+                TextColumn::make('rak.nama_rak')
                     ->numeric()
                     ->sortable(),
+                ImageColumn::make('qr_code_path')
+                    ->label('QR Code')
+                    ->getStateUsing(fn ($record) => $record->qr_code_url)
+                    ->height(50)
+                    ->width(50)
+                    ->circular(false),
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime()    
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
@@ -33,6 +40,7 @@ class BoxesTable
             ])
             ->filters([
                 //
+
             ])
             ->recordActions([
                 ViewAction::make(),

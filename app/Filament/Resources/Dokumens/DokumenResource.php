@@ -21,7 +21,7 @@ class DokumenResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Arsip Dokumen';
 
-    protected static ?string $recordTitleAttribute = 'judul_dokumen';
+    protected static ?string $recordTitleAttribute = 'judul';
 
     public static function form(Schema $schema): Schema
     {

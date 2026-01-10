@@ -24,7 +24,7 @@ class Dokumen extends Model
 
         // 'lokasi_id',
         // 'rak_id',
-        'box_id',
+        'box_id',   
         // 'status'
     ];
 

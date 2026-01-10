@@ -20,10 +20,10 @@ class PeminjamenTable
                 TextColumn::make('tanggal_kembali')
                     ->date()
                     ->sortable(),
-                TextColumn::make('user_id')
+                TextColumn::make('User.name')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('dokumen_id')
+                TextColumn::make('Dokumen.judul')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')

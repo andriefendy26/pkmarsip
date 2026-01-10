@@ -6,6 +6,7 @@ use App\Filament\Resources\Boxes\Pages\CreateBox;
 use App\Filament\Resources\Boxes\Pages\EditBox;
 use App\Filament\Resources\Boxes\Pages\ListBoxes;
 use App\Filament\Resources\Boxes\Pages\ViewBox;
+use App\Filament\Resources\Boxes\RelationManagers\DokumensRelationManager;
 use App\Filament\Resources\Boxes\Schemas\BoxForm;
 use App\Filament\Resources\Boxes\Schemas\BoxInfolist;
 use App\Filament\Resources\Boxes\Tables\BoxesTable;
@@ -53,6 +54,7 @@ class BoxResource extends Resource
     {
         return [
             //
+            DokumensRelationManager::class,
         ];
     }
 

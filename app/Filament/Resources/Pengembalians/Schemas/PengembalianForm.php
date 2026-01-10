@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources\Pengembalians\Schemas;
 
+use App\Models\Peminjaman;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
+use Ramsey\Collection\Set;
 
 class PengembalianForm
 {
@@ -13,16 +16,18 @@ class PengembalianForm
     {
         return $schema
             ->components([
-                TextInput::make('peminjaman_id')
-                    ->required()
-                    ->numeric(),
+
+                Select::make('peminjaman_id')
+                    ->label('Kode Peminjaman')
+                    ->options(Peminjaman::pluck('kode_peminjaman', 'id'))
+                    ->required(),
                 DatePicker::make('tanggal_kembali')
                     ->required(),
                 Textarea::make('keterangan')
                     ->columnSpanFull(),
-                TextInput::make('user_id')
-                    ->required()
-                    ->numeric(),
+                Select::make('user_id')
+                    ->options(\App\Models\User::pluck('name', 'id'))
+                    ->required(),
             ]);
     }
 }

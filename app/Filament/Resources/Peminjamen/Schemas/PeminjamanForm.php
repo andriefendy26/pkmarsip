@@ -3,11 +3,13 @@
 namespace App\Filament\Resources\Peminjamen\Schemas;
 
 use App\Models\Dokumen;
+use App\Models\Peminjaman;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Set;
 
 class PeminjamanForm
 {
@@ -15,6 +17,12 @@ class PeminjamanForm
     {
         return $schema
             ->components([
+                TextInput::make('kode_peminjaman')
+                    ->label('Kode Peminjaman')
+                    ->required()
+                    ->disabled()
+                    ->dehydrated()
+                    ->default(fn () => ("PMJ" . str_pad(Peminjaman::count() + 1, 3, '0', STR_PAD_LEFT)),),
                 DatePicker::make('tanggal_pinjam')
                     ->required(),
                 DatePicker::make('tanggal_kembali'),
