@@ -109,7 +109,13 @@ class DokumensTable
             ->recordActions([
                 ActionsViewAction::make()
                     ->label('Lihat')
-                    ->icon('heroicon-o-eye'),
+                    ->icon('heroicon-o-eye')
+                     ->modalHeading(fn ($record) => 'Preview: ' . $record->judul)
+                    ->modalContent(fn ($record) => view('filament.pdf-preview', [
+                        'url' => $record->file_path ? asset('storage/' . $record->file_path) : null
+                    ]))
+                    ->modalWidth('7xl')
+                    ->modal(), 
                 ActionsEditAction::make()
                     ->label('Edit')
                     ->icon('heroicon-o-pencil'),

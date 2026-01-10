@@ -72,31 +72,6 @@
                         </li>
                     </ul>
                 </div>
-
-                <div class="bg-[#0EA5E9] relative lg:-ml-px -mb-px lg:mb-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg aspect-auto lg:aspect-auto w-full shrink-0 overflow-hidden flex items-center justify-center">
-                    <!-- Logo/Icon SVG -->
-                    <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-all translate-y-0 opacity-100 duration-750">
-                        <!-- Cabinet -->
-                        <rect x="40" y="30" width="120" height="140" rx="8" fill="#06B6D4" opacity="0.9"/>
-                        <rect x="50" y="40" width="100" height="35" rx="4" fill="#fff" opacity="0.8"/>
-                        <rect x="50" y="82" width="100" height="35" rx="4" fill="#fff" opacity="0.8"/>
-                        <rect x="50" y="124" width="100" height="36" rx="4" fill="#fff" opacity="0.8"/>
-                        
-                        <!-- Handles -->
-                        <rect x="95" y="55" width="10" height="3" rx="1.5" fill="#0EA5E9"/>
-                        <rect x="95" y="97" width="10" height="3" rx="1.5" fill="#0EA5E9"/>
-                        <rect x="95" y="139" width="10" height="3" rx="1.5" fill="#0EA5E9"/>
-                        
-                        <!-- Medical Cross -->
-                        <g transform="translate(80, 85)">
-                            <circle cx="20" cy="20" r="18" fill="#10B981"/>
-                            <rect x="17" y="10" width="6" height="20" rx="1" fill="#fff"/>
-                            <rect x="10" y="17" width="20" height="6" rx="1" fill="#fff"/>
-                        </g>
-                    </svg>
-                    
-                    <div class="absolute inset-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)]"></div>
-                </div>
             </main>
         </div>
 

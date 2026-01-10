@@ -8,6 +8,6 @@ class Rak extends Model
 {
     //
     protected $table = "raks";
-    protected $fillable = ['kode_rak', 'nama_rak', 'deskripsi'];
+    protected $fillable = ['kode_rak', 'nama_rak', 'deskripsi', 'lokasi_id'];
     
 }

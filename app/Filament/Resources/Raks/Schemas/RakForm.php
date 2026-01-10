@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Raks\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -30,6 +31,11 @@ class RakForm
                     ->columnSpanFull()
                     ->rows(2)
                     ->placeholder('Deskripsikan rak penyimpanan ini...'),
+                Select::make('lokasi_id')
+                    ->label('Lokasi')
+                    ->options(\App\Models\Lokasi::pluck('nama_lokasi', 'id'))
+                    ->required()
+                    ->searchable(),
             ]);
     }
 }

@@ -4,11 +4,15 @@ namespace App\Filament\Resources\JenisDokumens;
 
 use App\Filament\Resources\JenisDokumens\Pages\CreateJenisDokumen;
 use App\Filament\Resources\JenisDokumens\Pages\EditJenisDokumen;
+// use App\Filament\Resources\JenisDokumens\Pages\ListJenisDokumen;
 use App\Filament\Resources\JenisDokumens\Pages\ListJenisDokumens;
+use App\Filament\Resources\JenisDokumens\Pages\ViewJenisDokumen;
+// use App\Filament\Resources\JenisDokumens\Pages\ViewJenisDokumens;
 use App\Filament\Resources\JenisDokumens\Schemas\JenisDokumenForm;
 use App\Filament\Resources\JenisDokumens\Tables\JenisDokumensTable;
 use App\Models\JenisDokumen;
 use BackedEnum;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -37,6 +41,7 @@ class JenisDokumenResource extends Resource
     {
         return [
             //
+            RelationManagers\DokumensRelationManager::class,
         ];
     }
 
@@ -45,6 +50,7 @@ class JenisDokumenResource extends Resource
         return [
             'index' => ListJenisDokumens::route('/'),
             'create' => CreateJenisDokumen::route('/create'),
+            'view' => ViewJenisDokumen::route('/{record}'),
             'edit' => EditJenisDokumen::route('/{record}/edit'),
         ];
     }

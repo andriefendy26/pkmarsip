@@ -4,6 +4,7 @@ namespace App\Filament\Resources\JenisDokumens\Schemas;
 
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Schemas\Schema;
 
 class JenisDokumenForm
@@ -23,6 +24,19 @@ class JenisDokumenForm
                     ->columnSpanFull()
                     ->rows(3)
                     ->placeholder('Deskripsikan jenis dokumen ini...'),
+                TextInput::make('priode_retensi')
+                    ->label('Priode Retensi')
+                    ->nullable(),
+
+                TextInput::make('tindakan')
+                    ->label('Tindakan')
+                    ->nullable(),
+
+                Textarea::make('keterangan')
+                    ->label('Keterangan Retensi')
+                    ->rows(2)
+                    ->columnSpanFull()
+                    ->nullable(),
             ]);
     }
 }

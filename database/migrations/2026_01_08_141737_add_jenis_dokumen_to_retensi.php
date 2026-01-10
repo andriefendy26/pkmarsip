@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
         Schema::table('retensi', function (Blueprint $table) {
-            $table->string('keterangan')->nullable()->after('status_retensi');
-            $table->double('priode_retensi')->nullable()->after('status_retensi');
-            // $table->tindakan('priode_retensi')->nullable()->after('status_retensi');
-            $table->timestamps();
+            //
+            $table->foreignId('jenis_dokumen_id')->constrained('jenis_dokumens')->onDelete('cascade');
         });
     }
 
@@ -25,7 +22,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
-        Schema::dropIfExists('retensi');
+        Schema::table('retensi', function (Blueprint $table) {
+            //
+            // drop foreign and column added in up()
+            $table->dropForeign(['jenis_dokumen_id']);
+            $table->dropColumn('jenis_dokumen_id');
+        });
     }
 };

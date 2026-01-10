@@ -13,7 +13,8 @@
         "joaopaulolndev/filament-pdf-viewer": "2.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "mwguerra/filemanager": "^0.1.8"
+        "mwguerra/filemanager": "^0.1.8",
+        "simplesoftwareio/simple-qrcode": "^4.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

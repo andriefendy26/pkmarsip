@@ -22,8 +22,9 @@ class Dokumen extends Model
         'user_id',
         'jenis_dokumen_id',
 
-        'lokasi_id',
-        'rak_id',
+        // 'lokasi_id',
+        // 'rak_id',
+        'box_id',
         // 'status'
     ];
 
@@ -47,14 +48,19 @@ class Dokumen extends Model
         return $this->belongsTo(JenisDokumen::class);
     }
 
-    public function lokasi(): BelongsTo
-    {
-        return $this->belongsTo(Lokasi::class);
-    }
+    // public function lokasi(): BelongsTo
+    // {
+    //     return $this->belongsTo(Lokasi::class);
+    // }
 
-    public function rak(): BelongsTo
+    // public function rak(): BelongsTo
+    // {
+    //     return $this->belongsTo(Rak::class);
+    // }
+
+    public function box(): BelongsTo
     {
-        return $this->belongsTo(Rak::class);
+        return $this->belongsTo(Box::class);
     }
 
     public function user(): BelongsTo

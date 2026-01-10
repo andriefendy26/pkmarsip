@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Dokumens\Schemas;
 
+use App\Models\Box;
 use App\Models\JenisDokumen;
 use App\Models\Lokasi;
 use App\Models\Rak;
@@ -12,6 +13,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Set;
 
 class DokumenForm
 {
@@ -26,29 +28,57 @@ class DokumenForm
 
                 TextInput::make('nomor_dokumen')
                     ->label('Nomor Dokumen')
-                    ->required()
+                    // ->required()
                     ->maxLength(100),
 
                 TextInput::make('kode_dokumen')
                     ->label('Kode Dokumen')
                     ->required()
-                    ->maxLength(50),
+                    ->maxLength(50)
+                    // ->readonly()
+                    ->disabled()
+                    ->dehydrated()
+                    ->default(fn (callable $get) => $get('kode_dokumen')),
 
                 Select::make('jenis_dokumen_id')
                     ->label('Jenis Dokumen')
                     ->options(JenisDokumen::pluck('nama_jenis_dokumen', 'id'))
                     ->required()
-                    ->searchable(),
-
-                Select::make('lokasi_id')
-                    ->label('Lokasi')
-                    ->options(Lokasi::pluck('nama_lokasi', 'id'))
-                    ->required()
-                    ->searchable(),
-
-                Select::make('rak_id')
-                    ->label('Rak')
-                    ->options(Rak::pluck('nama_rak', 'id'))
+                    ->searchable()
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, Set $set) {
+                    if ($state) {
+                        $jenis = JenisDokumen::find($state);
+                        $kode = strtoupper(substr($jenis->nama_jenis_dokumen, 0, 3));
+                        $count = \App\Models\Dokumen::where('jenis_dokumen_id', $state)->count() + 1;
+                        // Format dengan padding 0 (misal: 001, 002, dst)
+                        $nomorUrut = str_pad($count, 3, '0', STR_PAD_LEFT);
+                        $set('kode_dokumen', $kode .  $nomorUrut);
+                    }
+                    }),
+                Select::make('box_id')
+                    ->label('Box')
+                    ->options(Box::pluck('kode_box', 'id'))
+                    // ->relationship('box', 'nama_box')
+                    ->createOptionForm([
+                        Select::make('rak_id')
+                            ->label('Rak')
+                            ->options(Rak::pluck('nama_rak', 'id'))
+                            ->required()
+                            ->searchable(),
+                        TextInput::make('kode_box')
+                            ->label('Kode Box')
+                            ->required()
+                            ->maxLength(50),
+                        TextInput::make('nama_box')
+                            ->label('Nama Box')
+                            ->required()
+                            ->maxLength(100),
+                        Textarea::make('deskripsi')
+                            ->label('Deskripsi Box')
+                            ->rows(2)
+                            ->columnSpanFull(),
+                    ])
                     ->required()
                     ->searchable(),
 

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             // $table->foreignId('jenis_dokumen_id')->constrained('jenis_dokumens')->onDelete('cascade');
             $table->string('judul');
-            $table->string('nomor_dokumen')->unique();
+            $table->string('nomor_dokumen')->nullable();
             $table->string('kode_dokumen')->unique();
             $table->text('deskripsi_dokumen')->nullable();
             $table->text('perihal')->nullable();
