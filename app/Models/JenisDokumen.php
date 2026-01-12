@@ -17,18 +17,14 @@ class JenisDokumen extends Model
     // use SoftDeletes;
     protected $table = "jenis_dokumens";
 
+    
     protected $fillable = ['nama_jenis_dokumen', 'deskripsi', 'qr_code_path', 'priode_retensi', 'tindakan', 'keterangan'];
 
     public function Dokumens(): HasMany
     {
         return $this->hasMany(Dokumen::class);
     }
-    // public function retensis(): HasMany
-    // {
-    //     return $this->hasMany(Retensi::class);
-    // }
 
-    // Allow mass assignment for retensi-related fields
     protected $guarded = [];
 
     protected static function booted()

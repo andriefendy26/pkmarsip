@@ -20,8 +20,11 @@ class DokumenResource extends Resource
     protected static ?string $model = Dokumen::class;
 
     protected static string | UnitEnum | null $navigationGroup = 'Arsip Dokumen';
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'judul';
+
+    protected static ?string $navigationLabel = 'Dokumen';
 
     public static function form(Schema $schema): Schema
     {

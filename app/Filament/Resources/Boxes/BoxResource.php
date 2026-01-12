@@ -21,16 +21,15 @@ use UnitEnum;
 class BoxResource extends Resource
 {
     protected static ?string $model = Box::class;
-
+    
+    // protected static ?string $navigationLabel = 'Boxes';
     protected static string | UnitEnum | null $navigationGroup = 'Fisik';
 
-    // protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-    
     protected static ?string $slug = 'boxes';
 
-     // Tambahkan 2 baris ini untuk pluralisasi
     protected static ?string $pluralModelLabel = 'Boxes';
     protected static ?string $navigationLabel = 'Boxes';
+     protected static ?int $navigationSort = 3;
 
 
     protected static ?string $recordTitleAttribute = 'kode_box';

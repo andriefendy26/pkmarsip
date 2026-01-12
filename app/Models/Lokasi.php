@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lokasi extends Model
 {
@@ -12,4 +13,9 @@ class Lokasi extends Model
     protected $table = "lokasis";
 
     protected $fillable = ['kode_lokasi', 'nama_lokasi', 'deskripsi'];
+
+    public function Rak(): HasMany
+    {
+        return $this->hasMany(Rak::class, 'lokasi_id', 'id');
+    }
 }

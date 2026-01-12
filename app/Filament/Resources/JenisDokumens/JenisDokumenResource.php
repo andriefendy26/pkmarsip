@@ -22,10 +22,10 @@ use UnitEnum;
 class JenisDokumenResource extends Resource
 {
     protected static ?string $model = JenisDokumen::class;
-
     protected static string | UnitEnum | null $navigationGroup = 'Arsip Dokumen';
-
+    protected static ?int $navigationSort = 1;
     protected static ?string $recordTitleAttribute = 'nama_jenis_dokumen';
+    protected static ?string $navigationLabel = 'Jenis Dokumen';
 
     public static function form(Schema $schema): Schema
     {

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->date('tanggal_kembali');
             $table->text('keterangan')->nullable();
             
-            $table->foreignId('peminjaman_id')->constrained('peminjamen')->onDelete('cascade');
+            $table->foreignId('peminjaman_id')->constrained('peminjaman')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             // $table->foreignId('dokumen_id')->constrained('dokumens')->onDelete('cascade');
             $table->timestamps();

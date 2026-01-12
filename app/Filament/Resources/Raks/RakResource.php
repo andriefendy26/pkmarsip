@@ -20,8 +20,11 @@ class RakResource extends Resource
     protected static ?string $model = Rak::class;
 
     protected static string | UnitEnum | null $navigationGroup = 'Fisik';
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'nama_rak';
+    
+    protected static ?string $navigationLabel = 'Rak';
 
     public static function form(Schema $schema): Schema
     {
@@ -37,6 +40,7 @@ class RakResource extends Resource
     {
         return [
             //
+            RelationManagers\BoxRelationManager::class,
         ];
     }
 
