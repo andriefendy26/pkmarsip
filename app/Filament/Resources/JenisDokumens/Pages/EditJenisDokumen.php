@@ -10,6 +10,11 @@ class EditJenisDokumen extends EditRecord
 {
     protected static string $resource = JenisDokumenResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+    
     protected function getHeaderActions(): array
     {
         return [

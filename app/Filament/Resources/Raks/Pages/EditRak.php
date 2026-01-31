@@ -10,6 +10,11 @@ class EditRak extends EditRecord
 {
     protected static string $resource = RakResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function getHeaderActions(): array
     {
         return [
