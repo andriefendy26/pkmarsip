@@ -36,10 +36,7 @@ class BoxRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->column([
-                // Tables\Columns\TextColumn::make('kode_box')->label('Kode Box')->sortable()->searchable(),
-                // Tables\Columns\TextColumn::make('nama_box')->label('Nama Box')->sortable()->searchable(),
-                // Tables\Columns\TextColumn::make('deskripsi')->label('Deskripsi')->limit(50)->wrap(),
+            ->columns([
                 Tables\Columns\TextColumn::make('kode_box')->label('Kode'),
                 Tables\Columns\TextColumn::make('nama_box')->label('Nama'),
                 Tables\Columns\TextColumn::make('deskripsi')->label('Deskripsi'),

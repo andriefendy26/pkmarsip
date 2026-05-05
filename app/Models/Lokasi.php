@@ -12,10 +12,26 @@ class Lokasi extends Model
 
     protected $table = "lokasis";
 
-    protected $fillable = ['kode_lokasi', 'nama_lokasi', 'deskripsi'];
+    protected $fillable = ['kode_lokasi', 'nama_lokasi', 'deskripsi','ruangan_id'];
 
     public function Rak(): HasMany
     {
         return $this->hasMany(Rak::class, 'lokasi_id', 'id');
     }
+
+    public function ruangan()
+    {
+        return $this->belongsTo(Ruangan::class, 'ruangan_id');
+    }
+    
+    // public function rak(): HasMany
+    // {
+    //     return $this->hasMany(Rak::class, 'lokasi_id', 'id');
+    // }
+
+    public function raks(): HasMany
+    {
+        return $this->hasMany(Rak::class, 'lokasi_id', 'id');
+    }
 }
+

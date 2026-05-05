@@ -62,9 +62,9 @@ class AdminPanelProvider extends PanelProvider
                 FilamentShieldPlugin::make(),
                 NeobrutalismeTheme::make(),
                 FileManagerPlugin::make([
-                        FileManager::class,           
-                ])
-            ])
+                        FileManager::class,       
+                ])->fileManagerPageSidebar(false)
+            ]) 
             ->topNavigation()
             ->navigationGroups([
                 NavigationGroup::make('Arsip Dokumen')

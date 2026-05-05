@@ -21,7 +21,6 @@ class RakResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Fisik';
     protected static ?int $navigationSort = 2;
-
     protected static ?string $recordTitleAttribute = 'nama_rak';
     
     protected static ?string $navigationLabel = 'Rak';

@@ -21,7 +21,7 @@ class LokasiResource extends Resource
     protected static ?string $model = Lokasi::class;
 
 
-    protected static ?string $navigationLabel = 'Lokasi';
+    protected static ?string $navigationLabel = 'Lemari';
     protected static string | UnitEnum | null $navigationGroup = 'Fisik';
     protected static ?int $navigationSort = 1;
     
