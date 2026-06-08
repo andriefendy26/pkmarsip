@@ -40,9 +40,9 @@ class ListBoxes extends ListRecords
 
     public function refreshStats(): void
     {
-        $this->totalBoxes    = Box::count();
+        $this->totalBoxes     = Box::count();
         $this->totalRakTerisi = Box::whereNotNull('rak_id')->count();
-        $this->totalDokumen  = Box::withCount('dokumens')->get()->sum('dokumens_count');
+        $this->totalDokumen   = Box::withCount('dokumens')->get()->sum('dokumens_count');
     }
 
     public function getBoxesProperty()

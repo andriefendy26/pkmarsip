@@ -65,15 +65,18 @@
 
         {{-- ══ TOOLBAR: SEARCH + TAMBAH ════════════════════════════════════════ --}}
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            
             <div class="relative max-w-xs flex-1">
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                {{-- <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                     <x-heroicon-o-magnifying-glass class="h-4 w-4 text-gray-400" />
-                </div>
+                </div> --}}
                 <input
                     type="text"
-                    wire:model.live.debounce.300ms="search"
+                    wire:model.live.debounce.300ms="search"Belum ada lokasi di ruangan ini
+
+
                     placeholder="Cari {{ $this->levelMeta['label'] }}..."
-                    class="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                    class="w-full rounded-lg border border-gray-200 bg-white p-2 pl-9 pr-4 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
                 />
             </div>
             <div class="flex items-center gap-3">
