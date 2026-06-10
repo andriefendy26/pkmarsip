@@ -38,21 +38,23 @@ class DokumensTable
                     ->searchable()
                     ->sortable()
                     ->wrap()
-                    ->limit(50),
+                    ->limit(50)
+                    ->description(fn ($record) => 'Dibuat : ' . $record->created_at->format('d M Y H:i')),
+                    // ->description(fn ($record) => 'Dibuat : '. $record->jenisDokumen->nama_jenis_dokumen),
 
-                TextColumn::make('kode_dokumen')
-                    ->label('Kode')
-                    ->searchable()
-                    ->sortable()
-                    ->badge()
-                    ->color('info'),
+                // TextColumn::make('kode_dokumen')
+                //     ->label('Kode')
+                //     ->searchable()
+                //     ->sortable()
+                //     ->badge()
+                //     ->color('info'),
 
                 TextColumn::make('jenisDokumen.nama_jenis_dokumen')
                     ->label('Jenis Dokumen')
                     ->sortable()
                     ->searchable()
                     ->badge()
-                    ->color('success'),
+                    ->color('info'),
 
                 TextColumn::make('user.name')
                     ->label('Dibuat Oleh')
@@ -61,37 +63,38 @@ class DokumensTable
                     ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('tanggal')
-                    ->label('Tanggal')
+                    ->label('Tanggal Dokumen')
+                    ->alignCenter()
                     ->date('d M Y')
                     ->sortable()
                     ->icon('heroicon-o-calendar'),
 
-                TextColumn::make('file_path')
-                    ->label('File')
-                    ->formatStateUsing(fn () => 'Lihat PDF')
-                    ->url(fn ($record) => asset('storage/' . $record->file_path))
-                    ->openUrlInNewTab()
-                    ->icon('heroicon-o-document')
-                    ->color('primary')
-                    ->weight(FontWeight::SemiBold),
+                // TextColumn::make('file_path')
+                //     ->label('File')
+                //     ->formatStateUsing(fn () => 'Lihat PDF')
+                //     ->url(fn ($record) => asset('storage/' . $record->file_path))
+                //     ->openUrlInNewTab()
+                //     ->icon('heroicon-o-document')
+                //     ->color('primary')
+                //     ->weight(FontWeight::SemiBold),
 
                 // PdfViewerEntry::make('file_path')
                 //     ->label('View the PDF')
                 //     ->minHeight('40svh'),
 
-                TextColumn::make('created_at')
-                    ->label('Dibuat Pada')
-                    ->dateTime('d M Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // TextColumn::make('created_at')
+                //     ->label('Dibuat Pada')
+                //     ->dateTime('d M Y H:i')
+                //     ->sortable(),
+                    // ->toggleable(isToggledHiddenByDefault: false),
 
-                TextColumn::make('updated_at')
-                    ->label('Diperbarui Pada')
-                    ->dateTime('d M Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->since()
-                    ->tooltip(fn ($record) => $record->updated_at->format('d M Y H:i:s')),
+                // TextColumn::make('updated_at')
+                //     ->label('Diperbarui Pada')
+                //     ->dateTime('d M Y H:i')
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true)
+                //     ->since()
+                //     ->tooltip(fn ($record) => $record->updated_at->format('d M Y H:i:s')),
             ])
             ->filters([
                 SelectFilter::make('jenis_dokumen_id')
@@ -108,9 +111,9 @@ class DokumensTable
             ])
             ->recordActions([
                 ActionsViewAction::make()
-                    ->label('Lihat')
+                    ->label('Lokasi Dokumen')
                     ->icon('heroicon-o-eye')
-                     ->modalHeading(fn ($record) => 'Preview: ' . $record->judul)
+                    ->modalHeading(fn ($record) => 'Preview: ' . $record->judul)
                     ->modalContent(fn ($record) => view('filament.pdf-preview', [
                         'url' => $record->file_path ? asset('storage/' . $record->file_path) : null
                     ]))

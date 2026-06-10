@@ -13,22 +13,23 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Support\Facades\Storage;
+use Filament\Schemas\Components\Utilities\Set;
 
 class ArsipExplorer extends Page implements HasActions, HasForms
 {
     use InteractsWithActions;
     use InteractsWithForms;
 
-    protected static ?int    $navigationSort  = 0;
-    protected static ?string $title           = 'Arsip Explorer';
+    protected static ?int    $navigationSort = 0;
+    protected static ?string $title          = 'Arsip Explorer';
 
     protected string $view = 'filament.pages.arsip-explorer';
 
@@ -42,48 +43,7 @@ class ArsipExplorer extends Page implements HasActions, HasForms
 
     public string $search = '';
 
-    // Modal state
-    public bool $showModal     = false;
-    public string $modalMode   = 'create'; // create | edit
-    public ?int $editingId     = null;
-
-    // Form fields — Ruangan
-    public string $f_kode_ruangan = '';
-    public string $f_nama_ruangan = '';
-    public string $f_deskripsi_ruangan = '';
-
-    // Form fields — Lokasi
-    public string $f_kode_lokasi = '';
-    public string $f_nama_lokasi = '';
-    public string $f_deskripsi_lokasi = '';
-
-    // Form fields — Rak
-    public string $f_kode_rak = '';
-    public string $f_nama_rak = '';
-    public string $f_deskripsi_rak = '';
-
-    // Form fields — Box
-    public string $f_kode_box = '';
-    public string $f_nama_box = '';
-    public string $f_deskripsi_box = '';
-
-    // Form fields — Dokumen
-    public string  $f_judul            = '';
-    public string  $f_nomor_dokumen    = '';
-    public string  $f_kode_dokumen     = '';
-    public string  $f_perihal          = '';
-    public string  $f_tanggal          = '';
-    public string  $f_deskripsi_dokumen = '';
-    public string  $f_catatan          = '';
-    public ?int    $f_jenis_dokumen_id  = null;
-    public ?string $f_file_path        = null;
-
-    // Delete confirm
-    public bool   $showDeleteModal = false;
-    public ?int   $deletingId      = null;
-    public string $deletingLabel   = '';
-
-    // ── Breadcrumb ───────────────────────────────────────────────────────────
+    // ── Breadcrumb ────────────────────────────────────────────────────────────
 
     public function getBreadcrumbsProperty(): array
     {
@@ -113,7 +73,7 @@ class ArsipExplorer extends Page implements HasActions, HasForms
         if ($this->lokasiId) {
             $lokasi   = Lokasi::find($this->lokasiId);
             $crumbs[] = [
-                'label'     => $lokasi?->nama_lokasi ?? 'Lokasi',
+                'label'     => $lokasi?->nama_lokasi ?? 'Lokasi/Lemari',
                 'level'     => 'rak',
                 'ruanganId' => $this->ruanganId,
                 'lokasiId'  => $this->lokasiId,
@@ -164,7 +124,6 @@ class ArsipExplorer extends Page implements HasActions, HasForms
         $this->rakId     = $rakId;
         $this->boxId     = $boxId;
         $this->search    = '';
-        $this->closeModal();
     }
 
     public function drillDown(string $targetLevel, int $id): void
@@ -255,7 +214,7 @@ class ArsipExplorer extends Page implements HasActions, HasForms
             ->paginate(15);
     }
 
-    // ── Stats per level ───────────────────────────────────────────────────────
+    // ── Stats ─────────────────────────────────────────────────────────────────
 
     public function getStatsProperty(): array
     {
@@ -267,18 +226,18 @@ class ArsipExplorer extends Page implements HasActions, HasForms
                 ['label' => 'Total Box',     'value' => Box::count(),     'icon' => 'heroicon-o-archive-box',       'color' => 'amber'],
             ],
             'lokasi' => [
-                ['label' => 'Lokasi dalam Ruangan', 'value' => Lokasi::where('ruangan_id', $this->ruanganId)->count(), 'icon' => 'heroicon-o-map-pin', 'color' => 'purple'],
-                ['label' => 'Total Rak',    'value' => Rak::whereHas('Lokasi', fn($q) => $q->where('ruangan_id', $this->ruanganId))->count(), 'icon' => 'heroicon-o-building-office-2', 'color' => 'green'],
-                ['label' => 'Total Box',    'value' => Box::whereHas('rak.Lokasi', fn($q) => $q->where('ruangan_id', $this->ruanganId))->count(), 'icon' => 'heroicon-o-archive-box', 'color' => 'amber'],
+                ['label' => 'Lokasi dalam Ruangan', 'value' => Lokasi::where('ruangan_id', $this->ruanganId)->count(), 'icon' => 'heroicon-o-map-pin',           'color' => 'purple'],
+                ['label' => 'Total Rak',            'value' => Rak::whereHas('Lokasi', fn($q) => $q->where('ruangan_id', $this->ruanganId))->count(),            'icon' => 'heroicon-o-building-office-2', 'color' => 'green'],
+                ['label' => 'Total Box',            'value' => Box::whereHas('rak.Lokasi', fn($q) => $q->where('ruangan_id', $this->ruanganId))->count(),        'icon' => 'heroicon-o-archive-box',       'color' => 'amber'],
             ],
             'rak' => [
-                ['label' => 'Rak dalam Lokasi', 'value' => Rak::where('lokasi_id', $this->lokasiId)->count(), 'icon' => 'heroicon-o-building-office-2', 'color' => 'green'],
-                ['label' => 'Total Box',     'value' => Box::whereHas('rak', fn($q) => $q->where('lokasi_id', $this->lokasiId))->count(), 'icon' => 'heroicon-o-archive-box', 'color' => 'amber'],
-                ['label' => 'Total Dokumen', 'value' => Dokumen::whereHas('box.rak', fn($q) => $q->where('lokasi_id', $this->lokasiId))->count(), 'icon' => 'heroicon-o-document-text', 'color' => 'blue'],
+                ['label' => 'Rak dalam Lokasi', 'value' => Rak::where('lokasi_id', $this->lokasiId)->count(),                                                   'icon' => 'heroicon-o-building-office-2', 'color' => 'green'],
+                ['label' => 'Total Box',         'value' => Box::whereHas('rak', fn($q) => $q->where('lokasi_id', $this->lokasiId))->count(),                    'icon' => 'heroicon-o-archive-box',       'color' => 'amber'],
+                ['label' => 'Total Dokumen',     'value' => Dokumen::whereHas('box.rak', fn($q) => $q->where('lokasi_id', $this->lokasiId))->count(),            'icon' => 'heroicon-o-document-text',     'color' => 'blue'],
             ],
             'box' => [
-                ['label' => 'Box dalam Rak',  'value' => Box::where('rak_id', $this->rakId)->count(),     'icon' => 'heroicon-o-archive-box',  'color' => 'amber'],
-                ['label' => 'Total Dokumen',  'value' => Dokumen::whereHas('box', fn($q) => $q->where('rak_id', $this->rakId))->count(), 'icon' => 'heroicon-o-document-text', 'color' => 'blue'],
+                ['label' => 'Box dalam Rak',  'value' => Box::where('rak_id', $this->rakId)->count(),                                                           'icon' => 'heroicon-o-archive-box',   'color' => 'amber'],
+                ['label' => 'Total Dokumen',  'value' => Dokumen::whereHas('box', fn($q) => $q->where('rak_id', $this->rakId))->count(),                        'icon' => 'heroicon-o-document-text', 'color' => 'blue'],
             ],
             'dokumen' => [
                 ['label' => 'Dokumen dalam Box', 'value' => Dokumen::where('box_id', $this->boxId)->count(), 'icon' => 'heroicon-o-document-text', 'color' => 'blue'],
@@ -301,339 +260,280 @@ class ArsipExplorer extends Page implements HasActions, HasForms
         };
     }
 
-    // ── Modal helpers ─────────────────────────────────────────────────────────
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
-    public function openCreateModal(): void
+    public function getJenisDokumenOptionsProperty(): array
     {
-        $this->resetFormFields();
-        $this->modalMode  = 'create';
-        $this->editingId  = null;
-        $this->showModal  = true;
+        return JenisDokumen::orderBy('nama_jenis_dokumen')->pluck('nama_jenis_dokumen', 'id')->toArray();
     }
 
-    public function openEditModal(int $id): void
-    {
-        $this->resetFormFields();
-        $this->modalMode = 'edit';
-        $this->editingId = $id;
+    // ── Form Schema (per level) ───────────────────────────────────────────────
 
-        match ($this->level) {
-            'ruangan' => $this->loadRuangan($id),
-            'lokasi'  => $this->loadLokasi($id),
-            'rak'     => $this->loadRak($id),
-            'box'     => $this->loadBox($id),
-            'dokumen' => $this->loadDokumen($id),
-            default   => null,
+    protected function getFormSchema(): array
+    {
+        return match ($this->level) {
+            'ruangan' => [
+                TextInput::make('kode_ruangan')
+                    ->label('Kode Ruangan')
+                    ->required()
+                    ->maxLength(50)
+                    ->placeholder('R-001'),
+                TextInput::make('nama_ruangan')
+                    ->label('Nama Ruangan')
+                    ->required()
+                    ->maxLength(255),
+                // Textarea::make('deskripsi')
+                //     ->label('Deskripsi')
+                //     ->rows(3),
+            ],
+            'lokasi' => [
+                TextInput::make('kode_lokasi')
+                    ->label('Kode Lokasi')
+                    ->required()
+                    ->maxLength(50)
+                    ->placeholder('L-001'),
+                TextInput::make('nama_lokasi')
+                    ->label('Nama Lokasi')
+                    ->required()
+                    ->maxLength(255),
+                // Textarea::make('deskripsi')
+                //     ->label('Deskripsi')
+                //     ->rows(3),
+            ],
+            'rak' => [
+                TextInput::make('kode_rak')
+                    ->label('Kode Rak')
+                    ->required()
+                    ->maxLength(50)
+                    ->placeholder('RAK-001'),
+                TextInput::make('nama_rak')
+                    ->label('Nama Rak')
+                    ->required()
+                    ->maxLength(255),
+                // Textarea::make('deskripsi')
+                //     ->label('Deskripsi')
+                //     ->rows(3),
+            ],
+            'box' => [
+                TextInput::make('kode_box')
+                    ->label('Kode Box')
+                    ->required()
+                    ->maxLength(50)
+                    ->placeholder('BOX-001'),
+                TextInput::make('nama_box')
+                    ->label('Nama Box')
+                    ->required()
+                    ->maxLength(255),
+                // Textarea::make('deskripsi')
+                //     ->label('Deskripsi')
+                //     ->rows(3),
+            ],
+            'dokumen' => 
+              [
+                TextInput::make('judul')
+                    ->label('Judul Dokumen')
+                    ->required()
+                    ->maxLength(255),
+
+                TextInput::make('nomor_dokumen')
+                    ->label('Nomor Dokumen')
+                    // ->required()
+                    ->maxLength(100),
+
+                TextInput::make('kode_dokumen')
+                    ->label('Kode Dokumen')
+                    ->required()
+                    ->maxLength(50)
+                    // ->readonly()
+                    ->disabled()
+                    ->dehydrated()
+                    ->default(fn (callable $get) => $get('kode_dokumen')),
+
+                Select::make('jenis_dokumen_id')
+                    ->label('Jenis Dokumen')
+                    ->options(JenisDokumen::pluck('nama_jenis_dokumen', 'id'))
+                    ->required()
+                    ->searchable()
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, Set $set) {
+                    if ($state) {
+                        $jenis = JenisDokumen::find($state);
+                        $kode = strtoupper(substr($jenis->nama_jenis_dokumen, 0, 3));
+                        $count = \App\Models\Dokumen::where('jenis_dokumen_id', $state)->count() + 1;
+                        // Format dengan padding 0 (misal: 001, 002, dst)
+                        $nomorUrut = str_pad($count, 3, '0', STR_PAD_LEFT);
+                        $set('kode_dokumen', $kode .  $nomorUrut);
+                    }
+                    }),
+                // Select::make('box_id')
+                //     ->label('Box')
+                //     ->options(Box::pluck('kode_box', 'id'))
+                //     // ->relationship('box', 'nama_box')
+                //     ->createOptionForm([
+                //         Select::make('rak_id')
+                //             ->label('Rak')
+                //             ->options(Rak::pluck('nama_rak', 'id'))
+                //             ->required()
+                //             ->searchable(),
+                //         TextInput::make('kode_box')
+                //             ->label('Kode Box')
+                //             ->required()
+                //             ->maxLength(50),
+                //         TextInput::make('nama_box')
+                //             ->label('Nama Box')
+                //             ->required()
+                //             ->maxLength(100),
+                //         Textarea::make('deskripsi')
+                //             ->label('Deskripsi Box')
+                //             ->rows(2)
+                //             ->columnSpanFull(),
+                //     ])
+                //     ->required()
+                //     ->searchable(),
+
+                // Textarea::make('deskripsi_dokumen')
+                //     ->label('Deskripsi Dokumen')
+                //     ->columnSpanFull()
+                //     ->rows(3),
+
+                // Textarea::make('perihal')
+                //     ->label('Perihal')
+                //     ->columnSpanFull()
+                //     ->rows(3),
+
+                DatePicker::make('tanggal')
+                    ->label('Tanggal Dokumen')
+                    ->required(),
+
+                FileUpload::make('file_path')
+                    ->disk('public')
+                    ->directory('ArsipFiles')
+                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                    ->maxSize(10240)
+                    ->required(),
+
+                // Textarea::make('catatan')
+                //     ->label('Catatan')
+                //     ->columnSpanFull()
+                //     ->rows(2),
+
+                // Select::make('status')
+                //     ->label('Status')
+                //     ->options([
+                //         'aktif' => 'Aktif',
+                //         'kadaluarsa' => 'Kadaluarsa',
+                //         'dipinjam' => 'Dipinjam',
+                //         'rusak' => 'Rusak',
+                //     ])
+                //     ->default('aktif')
+                //     ->required(),
+            ]
+            ,
+            default => [],
         };
-
-        $this->showModal = true;
     }
 
-    public function closeModal(): void
+    // ── Actions ───────────────────────────────────────────────────────────────
+
+    /**
+     * Dipanggil dari view: wire:click="mountAction('create')"
+     */
+    public function createAction(): Action
     {
-        $this->showModal = false;
-        $this->resetFormFields();
+        $label = $this->levelMeta['label'];
+
+        return Action::make('create')
+            ->label("Tambah {$label}")
+            ->modalHeading("Tambah {$label}")
+            ->modalSubmitActionLabel('Simpan')
+            ->modalWidth('lg')
+            ->form(fn () => $this->getFormSchema())
+            ->action(function (array $data): void {
+                match ($this->level) {
+                    'ruangan' => Ruangan::create($data),
+                    'lokasi'  => Lokasi::create([...$data,  'ruangan_id' => $this->ruanganId]),
+                    'rak'     => Rak::create([...$data,     'lokasi_id'  => $this->lokasiId]),
+                    'box'     => Box::create([...$data,     'rak_id'     => $this->rakId]),
+                    'dokumen' => Dokumen::create([...$data, 'box_id'     => $this->boxId]),
+                    default   => null,
+                };
+
+                $label = $this->levelMeta['label'];
+                Notification::make()->title("{$label} berhasil ditambahkan.")->success()->send();
+            });
     }
 
-    private function resetFormFields(): void
+    /**
+     * Dipanggil dari view: wire:click="mountAction('edit', { id: {{ $item->id }} })"
+     */
+    public function editAction(): Action
     {
-        $this->f_kode_ruangan = '';
-        $this->f_nama_ruangan = '';
-        $this->f_deskripsi_ruangan = '';
+        return Action::make('edit')
+            ->modalHeading(fn (array $arguments) => 'Edit ' . $this->levelMeta['label'])
+            ->modalSubmitActionLabel('Perbarui')
+            ->modalWidth('lg')
+            ->form(fn () => $this->getFormSchema())
+            ->fillForm(function (array $arguments): array {
+                $id = $arguments['id'];
 
-        $this->f_kode_lokasi = '';
-        $this->f_nama_lokasi = '';
-        $this->f_deskripsi_lokasi = '';
+                return match ($this->level) {
+                    'ruangan' => Ruangan::findOrFail($id)->only(['kode_ruangan', 'nama_ruangan', 'deskripsi']),
+                    'lokasi'  => Lokasi::findOrFail($id)->only(['kode_lokasi', 'nama_lokasi', 'deskripsi']),
+                    'rak'     => Rak::findOrFail($id)->only(['kode_rak', 'nama_rak', 'deskripsi']),
+                    'box'     => Box::findOrFail($id)->only(['kode_box', 'nama_box', 'deskripsi']),
+                    'dokumen' => Dokumen::findOrFail($id)->only([
+                        'judul', 'nomor_dokumen', 'kode_dokumen', 'perihal','file_path',
+                        'tanggal', 'deskripsi_dokumen', 'catatan', 'jenis_dokumen_id',
+                    ]),
+                    default => [],
+                };
+            })
+            ->action(function (array $data, array $arguments): void {
+                $id = $arguments['id'];
 
-        $this->f_kode_rak = '';
-        $this->f_nama_rak = '';
-        $this->f_deskripsi_rak = '';
+                match ($this->level) {
+                    'ruangan' => Ruangan::findOrFail($id)->update($data),
+                    'lokasi'  => Lokasi::findOrFail($id)->update($data),
+                    'rak'     => Rak::findOrFail($id)->update($data),
+                    'box'     => Box::findOrFail($id)->update($data),
+                    'dokumen' => Dokumen::findOrFail($id)->update($data),
+                    default   => null,
+                };
 
-        $this->f_kode_box = '';
-        $this->f_nama_box = '';
-        $this->f_deskripsi_box = '';
-
-        $this->f_judul             = '';
-        $this->f_nomor_dokumen     = '';
-        $this->f_kode_dokumen      = '';
-        $this->f_perihal           = '';
-        $this->f_tanggal           = '';
-        $this->f_deskripsi_dokumen = '';
-        $this->f_catatan           = '';
-        $this->f_jenis_dokumen_id  = null;
-        $this->f_file_path         = null;
+                $label = $this->levelMeta['label'];
+                Notification::make()->title("{$label} berhasil diperbarui.")->success()->send();
+            });
     }
 
-    // ── Load for edit ─────────────────────────────────────────────────────────
-
-    private function loadRuangan(int $id): void
+    /**
+     * Dipanggil dari view: wire:click="mountAction('delete', { id: {{ $item->id }}, label: '...' })"
+     */
+    public function deleteAction(): Action
     {
-        $r = Ruangan::findOrFail($id);
-        $this->f_kode_ruangan      = $r->kode_ruangan ?? '';
-        $this->f_nama_ruangan      = $r->nama_ruangan ?? '';
-        $this->f_deskripsi_ruangan = $r->deskripsi    ?? '';
+        return Action::make('delete')
+            ->requiresConfirmation()
+            ->modalHeading('Konfirmasi Hapus')
+            ->modalDescription(fn (array $arguments) => "Hapus \"{$arguments['label']}\"? Tindakan ini tidak dapat dibatalkan.")
+            ->modalSubmitActionLabel('Hapus')
+            ->color('danger')
+            ->action(function (array $arguments): void {
+                $id = $arguments['id'];
+
+                match ($this->level) {
+                    'ruangan' => Ruangan::findOrFail($id)->delete(),
+                    'lokasi'  => Lokasi::findOrFail($id)->delete(),
+                    'rak'     => Rak::findOrFail($id)->delete(),
+                    'box'     => $this->deleteBox($id),
+                    'dokumen' => $this->deleteDokumen($id),
+                    default   => null,
+                };
+
+                $label = $this->levelMeta['label'];
+                Notification::make()->title("{$label} berhasil dihapus.")->success()->send();
+            });
     }
 
-    private function loadLokasi(int $id): void
-    {
-        $l = Lokasi::findOrFail($id);
-        $this->f_kode_lokasi      = $l->kode_lokasi ?? '';
-        $this->f_nama_lokasi      = $l->nama_lokasi ?? '';
-        $this->f_deskripsi_lokasi = $l->deskripsi   ?? '';
-    }
-
-    private function loadRak(int $id): void
-    {
-        $r = Rak::findOrFail($id);
-        $this->f_kode_rak      = $r->kode_rak  ?? '';
-        $this->f_nama_rak      = $r->nama_rak  ?? '';
-        $this->f_deskripsi_rak = $r->deskripsi ?? '';
-    }
-
-    private function loadBox(int $id): void
-    {
-        $b = Box::findOrFail($id);
-        $this->f_kode_box      = $b->kode_box  ?? '';
-        $this->f_nama_box      = $b->nama_box  ?? '';
-        $this->f_deskripsi_box = $b->deskripsi ?? '';
-    }
-
-    private function loadDokumen(int $id): void
-    {
-        $d = Dokumen::findOrFail($id);
-        $this->f_judul             = $d->judul             ?? '';
-        $this->f_nomor_dokumen     = $d->nomor_dokumen     ?? '';
-        $this->f_kode_dokumen      = $d->kode_dokumen      ?? '';
-        $this->f_perihal           = $d->perihal           ?? '';
-        $this->f_tanggal           = $d->tanggal?->format('Y-m-d') ?? '';
-        $this->f_deskripsi_dokumen = $d->deskripsi_dokumen ?? '';
-        $this->f_catatan           = $d->catatan           ?? '';
-        $this->f_jenis_dokumen_id  = $d->jenis_dokumen_id;
-        $this->f_file_path         = $d->file_path;
-    }
-
-    // ── Save (Create / Update) ────────────────────────────────────────────────
-
-    public function save(): void
-    {
-        match ($this->level) {
-            'ruangan' => $this->saveRuangan(),
-            'lokasi'  => $this->saveLokasi(),
-            'rak'     => $this->saveRak(),
-            'box'     => $this->saveBox(),
-            'dokumen' => $this->saveDokumen(),
-            default   => null,
-        };
-    }
-
-    private function saveRuangan(): void
-    {
-        $this->validate([
-            'f_kode_ruangan' => 'required|string|max:50',
-            'f_nama_ruangan' => 'required|string|max:255',
-            'f_deskripsi_ruangan' => 'nullable|string',
-        ], [], [
-            'f_kode_ruangan' => 'Kode Ruangan',
-            'f_nama_ruangan' => 'Nama Ruangan',
-        ]);
-
-        $data = [
-            'kode_ruangan' => $this->f_kode_ruangan,
-            'nama_ruangan' => $this->f_nama_ruangan,
-            'deskripsi'    => $this->f_deskripsi_ruangan ?: null,
-        ];
-
-        if ($this->modalMode === 'edit') {
-            Ruangan::findOrFail($this->editingId)->update($data);
-            $msg = 'Ruangan berhasil diperbarui.';
-        } else {
-            Ruangan::create($data);
-            $msg = 'Ruangan berhasil ditambahkan.';
-        }
-
-        $this->closeModal();
-        Notification::make()->title($msg)->success()->send();
-    }
-
-    private function saveLokasi(): void
-    {
-        $this->validate([
-            'f_kode_lokasi' => 'required|string|max:50',
-            'f_nama_lokasi' => 'required|string|max:255',
-            'f_deskripsi_lokasi' => 'nullable|string',
-        ], [], [
-            'f_kode_lokasi' => 'Kode Lokasi',
-            'f_nama_lokasi' => 'Nama Lokasi',
-        ]);
-
-        $data = [
-            'kode_lokasi' => $this->f_kode_lokasi,
-            'nama_lokasi' => $this->f_nama_lokasi,
-            'deskripsi'   => $this->f_deskripsi_lokasi ?: null,
-            'ruangan_id'  => $this->ruanganId,
-        ];
-
-        if ($this->modalMode === 'edit') {
-            Lokasi::findOrFail($this->editingId)->update($data);
-            $msg = 'Lokasi berhasil diperbarui.';
-        } else {
-            Lokasi::create($data);
-            $msg = 'Lokasi berhasil ditambahkan.';
-        }
-
-        $this->closeModal();
-        Notification::make()->title($msg)->success()->send();
-    }
-
-    private function saveRak(): void
-    {
-        $this->validate([
-            'f_kode_rak' => 'required|string|max:50',
-            'f_nama_rak' => 'required|string|max:255',
-            'f_deskripsi_rak' => 'nullable|string',
-        ], [], [
-            'f_kode_rak' => 'Kode Rak',
-            'f_nama_rak' => 'Nama Rak',
-        ]);
-
-        $data = [
-            'kode_rak'  => $this->f_kode_rak,
-            'nama_rak'  => $this->f_nama_rak,
-            'deskripsi' => $this->f_deskripsi_rak ?: null,
-            'lokasi_id' => $this->lokasiId,
-        ];
-
-        if ($this->modalMode === 'edit') {
-            Rak::findOrFail($this->editingId)->update($data);
-            $msg = 'Rak berhasil diperbarui.';
-        } else {
-            Rak::create($data);
-            $msg = 'Rak berhasil ditambahkan.';
-        }
-
-        $this->closeModal();
-        Notification::make()->title($msg)->success()->send();
-    }
-
-    private function saveBox(): void
-    {
-        $this->validate([
-            'f_kode_box' => 'required|string|max:50',
-            'f_nama_box' => 'required|string|max:255',
-            'f_deskripsi_box' => 'nullable|string',
-        ], [], [
-            'f_kode_box' => 'Kode Box',
-            'f_nama_box' => 'Nama Box',
-        ]);
-
-        $data = [
-            'kode_box'  => $this->f_kode_box,
-            'nama_box'  => $this->f_nama_box,
-            'deskripsi' => $this->f_deskripsi_box ?: null,
-            'rak_id'    => $this->rakId,
-        ];
-
-        if ($this->modalMode === 'edit') {
-            Box::findOrFail($this->editingId)->update($data);
-            $msg = 'Box berhasil diperbarui.';
-        } else {
-            Box::create($data);
-            $msg = 'Box berhasil ditambahkan.';
-        }
-
-        $this->closeModal();
-        Notification::make()->title($msg)->success()->send();
-    }
-
-    private function saveDokumen(): void
-    {
-        $this->validate([
-            'f_judul'            => 'required|string|max:255',
-            'f_nomor_dokumen'    => 'nullable|string|max:100',
-            'f_kode_dokumen'     => 'nullable|string|max:100',
-            'f_perihal'          => 'nullable|string',
-            'f_tanggal'          => 'nullable|date',
-            'f_deskripsi_dokumen'=> 'nullable|string',
-            'f_catatan'          => 'nullable|string',
-            'f_jenis_dokumen_id' => 'nullable|exists:jenis_dokumens,id',
-        ], [], [
-            'f_judul'         => 'Judul Dokumen',
-            'f_nomor_dokumen' => 'Nomor Dokumen',
-        ]);
-
-        $data = [
-            'judul'             => $this->f_judul,
-            'nomor_dokumen'     => $this->f_nomor_dokumen    ?: null,
-            'kode_dokumen'      => $this->f_kode_dokumen     ?: null,
-            'perihal'           => $this->f_perihal          ?: null,
-            'tanggal'           => $this->f_tanggal          ?: null,
-            'deskripsi_dokumen' => $this->f_deskripsi_dokumen ?: null,
-            'catatan'           => $this->f_catatan          ?: null,
-            'jenis_dokumen_id'  => $this->f_jenis_dokumen_id,
-            'box_id'            => $this->boxId,
-        ];
-
-        if ($this->modalMode === 'edit') {
-            Dokumen::findOrFail($this->editingId)->update($data);
-            $msg = 'Dokumen berhasil diperbarui.';
-        } else {
-            Dokumen::create($data);
-            $msg = 'Dokumen berhasil ditambahkan.';
-        }
-
-        $this->closeModal();
-        Notification::make()->title($msg)->success()->send();
-    }
-
-    // ── Delete ────────────────────────────────────────────────────────────────
-
-    public function confirmDelete(int $id, string $label): void
-    {
-        $this->deletingId    = $id;
-        $this->deletingLabel = $label;
-        $this->showDeleteModal = true;
-    }
-
-    public function cancelDelete(): void
-    {
-        $this->deletingId      = null;
-        $this->deletingLabel   = '';
-        $this->showDeleteModal = false;
-    }
-
-    public function executeDelete(): void
-    {
-        $id = $this->deletingId;
-
-        match ($this->level) {
-            'ruangan' => $this->deleteRuangan($id),
-            'lokasi'  => $this->deleteLokasi($id),
-            'rak'     => $this->deleteRak($id),
-            'box'     => $this->deleteBox($id),
-            'dokumen' => $this->deleteDokumen($id),
-            default   => null,
-        };
-
-        $this->cancelDelete();
-    }
-
-    private function deleteRuangan(int $id): void
-    {
-        Ruangan::findOrFail($id)->delete();
-        Notification::make()->title('Ruangan berhasil dihapus.')->success()->send();
-    }
-
-    private function deleteLokasi(int $id): void
-    {
-        Lokasi::findOrFail($id)->delete();
-        Notification::make()->title('Lokasi berhasil dihapus.')->success()->send();
-    }
-
-    private function deleteRak(int $id): void
-    {
-        Rak::findOrFail($id)->delete();
-        Notification::make()->title('Rak berhasil dihapus.')->success()->send();
-    }
+    // ── Delete helpers (dengan file cleanup) ─────────────────────────────────
 
     private function deleteBox(int $id): void
     {
@@ -642,7 +542,6 @@ class ArsipExplorer extends Page implements HasActions, HasForms
             Storage::disk('public')->delete($box->qr_code_path);
         }
         $box->delete();
-        Notification::make()->title('Box berhasil dihapus.')->success()->send();
     }
 
     private function deleteDokumen(int $id): void
@@ -652,26 +551,5 @@ class ArsipExplorer extends Page implements HasActions, HasForms
             Storage::disk('public')->delete($dok->file_path);
         }
         $dok->delete();
-        Notification::make()->title('Dokumen berhasil dihapus.')->success()->send();
-    }
-
-    // ── Helpers for view ──────────────────────────────────────────────────────
-
-    public function getJenisDokumenOptionsProperty(): array
-    {
-        return JenisDokumen::orderBy('nama_jenis_dokumen')->pluck('nama_jenis_dokumen', 'id')->toArray();
-    }
-
-    public function getModalTitleProperty(): string
-    {
-        $action = $this->modalMode === 'create' ? 'Tambah' : 'Edit';
-        return match ($this->level) {
-            'ruangan' => "$action Ruangan",
-            'lokasi'  => "$action Lokasi",
-            'rak'     => "$action Rak",
-            'box'     => "$action Box",
-            'dokumen' => "$action Dokumen",
-            default   => $action,
-        };
     }
 }

@@ -15,28 +15,30 @@ class JenisDokumenForm
             ->components([
                 TextInput::make('nama_jenis_dokumen')
                     ->label('Nama Jenis Dokumen')
+                    // ->description('Masukkan nama jenis dokumen')
                     ->required()
                     ->maxLength(100)
                     ->unique(ignoreRecord: true),
-
-                Textarea::make('deskripsi')
-                    ->label('Deskripsi')
-                    ->columnSpanFull()
-                    ->rows(3)
-                    ->placeholder('Deskripsikan jenis dokumen ini...'),
+                // Textarea::make('deskripsi')
+                //     ->label('Deskripsi')
+                //     ->columnSpanFull()
+                //     ->rows(3)
+                //     ->placeholder('Deskripsikan jenis dokumen ini...'),
                 TextInput::make('priode_retensi')
-                    ->label('Priode Retensi')
+                    // ->description('Masukkan priode retensi dalam tahun (misal: 5)')
+                    ->label('Priode Retensi (tahun)')
                     ->nullable(),
 
                 TextInput::make('tindakan')
+                    // ->description('Masukkan tindakan yang harus dilakukan setelah masa retensi berakhir (misal: Hancurkan)')
                     ->label('Tindakan')
                     ->nullable(),
 
-                Textarea::make('keterangan')
-                    ->label('Keterangan Retensi')
-                    ->rows(2)
-                    ->columnSpanFull()
-                    ->nullable(),
-            ]);
+                // Textarea::make('keterangan')
+                //     ->label('Keterangan Retensi')
+                //     ->rows(2)
+                //     ->columnSpanFull()
+                //     ->nullable(),
+            ])->columns(1);
     }
 }

@@ -21,6 +21,8 @@ class Dokumen extends Model
         'catatan',
         'user_id',
         'jenis_dokumen_id',
+        'created_at',
+        'updated_at',
 
         // 'lokasi_id',
         // 'rak_id',

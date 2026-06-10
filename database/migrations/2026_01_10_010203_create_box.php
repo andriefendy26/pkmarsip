@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('box', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_box')->unique();
+            $table->string('kode_box')->nullable();
             $table->string('nama_box');
             $table->text('deskripsi')->nullable();
             $table->foreignId('rak_id')->constrained('raks')->onDelete('cascade');

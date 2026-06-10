@@ -24,10 +24,15 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+
+// File Manager
 use MWGuerra\FileManager\Filament\Pages\FileManager;
 use MWGuerra\FileManager\Filament\Resources\FileSystemItemResource;
 use MWGuerra\FileManager\FileManagerPlugin;
 use Nette\Utils\FileSystem;
+// use MWGuerra\FileManager\Filament\Resources\SchemaExample;
+// use MWGuerra\FileManager\Filament\Pages\SchemaExample;
+
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -62,8 +67,10 @@ class AdminPanelProvider extends PanelProvider
                 FilamentShieldPlugin::make(),
                 NeobrutalismeTheme::make(),
                 FileManagerPlugin::make([
-                        FileManager::class,       
+                        FileManager::class,
+                        // SchemaExample::class,    
                 ])->fileManagerPageSidebar(false)
+
             ]) 
             ->topNavigation()
             ->navigationGroups([
