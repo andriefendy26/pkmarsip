@@ -13,9 +13,13 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Support\Enums\FontWeight;
+use Filament\Forms\Components\TextInput;
 // use Joaopaulolndev\FilamentPdfViewer\Infolists\Components\PdfViewerEntry;
 
 class DokumensTable
@@ -113,12 +117,41 @@ class DokumensTable
                 ActionsViewAction::make()
                     ->label('Lokasi Dokumen')
                     ->icon('heroicon-o-eye')
-                    ->modalHeading(fn ($record) => 'Preview: ' . $record->judul)
-                    ->modalContent(fn ($record) => view('filament.pdf-preview', [
-                        'url' => $record->file_path ? asset('storage/' . $record->file_path) : null
-                    ]))
-                    ->modalWidth('7xl')
-                    ->modal(), 
+                    ->schema([
+                        Section::make('Informasi Lokasi')
+                            ->schema([ 
+                                TextEntry::make('box.nama_box')
+                                    ->label('Box')
+                                    ->default('-'), // untuk menghindari null
+                                TextEntry::make('box.rak.nama_rak')
+                                    ->label('Rak')
+                                    ->default('-'),
+                                TextEntry::make('box.rak.Lokasi.nama_lokasi')
+                                    ->label('Lemari')
+                                    ->default('-'),
+                                TextEntry::make('lokasi.rak.box.lokasi.ruangan.nama_ruangan')
+                                    ->label('Ruangan')
+                                    ->default('-'),])
+                                    ->columns(2),
+                        Section::make('QR Code Box')
+                            ->schema([
+                                ImageEntry::make('box.qr_code_path')
+                                    ->label('QR Code')
+                                    ->getStateUsing(fn ($record) => $record->box ? $record->box->qr_code_url : null)
+                                    ->height(150)
+                                    ->width(150)
+                                    ->circular(false)
+                                    ->default(null),
+                            ])
+                            ->columns(1),
+                    ])
+                    // ->modalHeading(fn ($record) => 'Preview: ' . $record->judul)
+                    // ->modalContent(fn ($record) => view('filament.pdf-preview', [
+                    //     'url' => $record->file_path ? asset('storage/' . $record->file_path) : null
+                    // ]))
+                    // ->modalWidth('7xl')
+                    // ->modal()
+                    , 
                 ActionsEditAction::make()
                     ->label('Edit')
                     ->icon('heroicon-o-pencil'),
