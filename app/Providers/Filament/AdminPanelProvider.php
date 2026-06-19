@@ -33,6 +33,8 @@ use Nette\Utils\FileSystem;
 // use MWGuerra\FileManager\Filament\Resources\SchemaExample;
 // use MWGuerra\FileManager\Filament\Pages\SchemaExample;
 
+use App\Filament\Pages\Auth\Login;
+
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -42,7 +44,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(Login::class)
             ->registration()
             ->colors([
                 'primary' => Color::Amber,
@@ -67,7 +69,7 @@ class AdminPanelProvider extends PanelProvider
                 FilamentShieldPlugin::make(),
                 NeobrutalismeTheme::make(),
                 FileManagerPlugin::make([
-                        FileManager::class,
+                        // FileManager::class,
                         // SchemaExample::class,    
                 ])->fileManagerPageSidebar(false)
 

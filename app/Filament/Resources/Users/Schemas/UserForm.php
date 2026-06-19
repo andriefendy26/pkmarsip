@@ -18,19 +18,27 @@ class UserForm
                     ->required(),
                 TextInput::make('email')
                     ->label('Email address')
-                    ->email()
-                    ->required(),
+                    ->email(),
+                    // ->required(),
+                TextInput::make('username')
+                    ->label('Username')
+                    ->required()
+                    ->unique(ignoreRecord: true),
                 DateTimePicker::make('email_verified_at'),
                 TextInput::make('password')
-                    ->password()
-                    ->required(),
+                    ->password(),
+                    // ->required(),
                 Select::make('roles')
                     ->relationship('roles', 'name')
                     ->label('Roles')
                     ->multiple()
                     ->preload()
                     ->searchable(),
-                    
+                Select::make('klaster_id')
+                    ->relationship('klaster', 'nama_klaster')
+                    ->label('Klaster')
+                    ->preload()
+                    ->searchable(),
             ]);
     }
 }

@@ -13,6 +13,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Facades\Filament;
+
 use UnitEnum;
 
 class DokumenResource extends Resource
@@ -25,6 +28,31 @@ class DokumenResource extends Resource
     protected static ?string $recordTitleAttribute = 'judul';
 
     protected static ?string $navigationLabel = 'Dokumen';
+
+    
+    // public static function getEloquentQuery(): Builder
+    // {
+    //     return parent::getEloquentQuery()
+    //         ->where('user_id', auth()->id());
+    // }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        /** @var User|null $user */
+        $user = Filament::auth()->user();
+
+        if (! $user) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        if ($user->hasRole('super_admin')) {
+            return $query;
+        }
+
+        return $query->where('user_id', $user->getKey());
+    }
 
     public static function form(Schema $schema): Schema
     {

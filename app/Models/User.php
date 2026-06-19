@@ -21,7 +21,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'username',
         'password',
+        'klaster_id',
     ];
 
     /**
@@ -45,5 +47,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function klaster()
+    {
+        return $this->belongsTo(Klaster::class, 'klaster_id');
+    }
+
+    public function dokumens()
+    {
+        return $this->hasMany(Dokumen::class, 'user_id');
     }
 }
