@@ -73,14 +73,14 @@ class DokumensTable
                     ->sortable()
                     ->icon('heroicon-o-calendar'),
 
-                // TextColumn::make('file_path')
-                //     ->label('File')
-                //     ->formatStateUsing(fn () => 'Lihat PDF')
-                //     ->url(fn ($record) => asset('storage/' . $record->file_path))
-                //     ->openUrlInNewTab()
-                //     ->icon('heroicon-o-document')
-                //     ->color('primary')
-                //     ->weight(FontWeight::SemiBold),
+                TextColumn::make('file_path')
+                    ->label('File')
+                    ->formatStateUsing(fn () => 'Lihat Dokumen')
+                    ->url(fn ($record) => asset('storage/' . $record->file_path))
+                    ->openUrlInNewTab()
+                    ->icon('heroicon-o-document')
+                    ->color('primary')
+                    ->weight(FontWeight::SemiBold),
 
                 // PdfViewerEntry::make('file_path')
                 //     ->label('View the PDF')
